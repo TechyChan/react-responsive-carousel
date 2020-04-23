@@ -54,6 +54,9 @@
         "prepublish-prerelease-to-npm": "git pull && yarn build && git add . && git commit -m 'Prepare for publishing prerelease'",
         "publish-prerelease-to-npm": "(git pull && npm version prerelease --preid=next && npm publish)"
     },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/techychan"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/leandrowd/react-responsive-carousel.git"
