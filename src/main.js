@@ -6,7 +6,7 @@ import(/* webpackChunkName: "carousel-component" */ './components/Carousel').the
         <Carousel
             showArrows
             infiniteLoop
-            autoPlay
+            autoPlay={false}
             emulateTouch
             onClickItem={(...args) => console.log('onClickItem', ...args)}
             onChange={(...args) => console.log('onChange', ...args)}

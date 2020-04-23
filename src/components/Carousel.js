@@ -57,6 +57,7 @@ class Carousel extends Component {
         renderIndicator: PropTypes.func,
         renderItem: PropTypes.func,
         renderThumbs: PropTypes.func,
+        stopTouchScrollTolerance: PropTypes.number,
     };
 
     static defaultProps = {
@@ -116,6 +117,7 @@ class Carousel extends Component {
             return item;
         },
         renderThumbs: (children) => children,
+        stopTouchScrollTolerance: 0.7,
     };
 
     constructor(props) {
@@ -398,6 +400,8 @@ class Carousel extends Component {
     onSwipeStart = (event) => {
         this.setState({
             swiping: true,
+            swipeStartTime: new Date().getTime(),
+            stopTouchScroll: false,
         });
         this.props.onSwipeStart(event);
         this.clearAutoPlay();
@@ -426,6 +430,24 @@ class Carousel extends Component {
 
         const axisDelta = isHorizontal ? delta.x : delta.y;
         let handledDelta = axisDelta;
+
+        const diffTime = new Date().getTime() - this.state.swipeStartTime;
+
+        const percentageMovement = isHorizontal
+            ? Math.abs(delta.x / window.innerWidth)
+            : Math.abs(delta.y / window.innerHeight);
+
+        if (percentageMovement / (diffTime / 1000) > this.props.stopTouchScrollTolerance) {
+            this.setState({
+                stopTouchScroll: true,
+            });
+        }
+
+        if (this.state.stopTouchScroll) {
+            event.preventDefault();
+        } else {
+            return;
+        }
 
         // prevent user from swiping left out of boundaries
         if (currentPosition === initialBoundry && axisDelta > 0) {
@@ -576,10 +598,12 @@ class Carousel extends Component {
     };
 
     onSwipeForward = () => {
+        if (!this.state.stopTouchScroll) return;
         this.increment(1, true);
     };
 
     onSwipeBackwards = () => {
+        if (!this.state.stopTouchScroll) return;
         this.decrement(1, true);
     };
 
